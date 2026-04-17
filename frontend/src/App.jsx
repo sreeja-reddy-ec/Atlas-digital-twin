@@ -8,6 +8,29 @@ const STATUS_LABELS = {
   2: "Critical",
 };
 
+const STATUS_THEME = {
+  0: {
+    label: "NOMINAL",
+    icon: "◎",
+  },
+  1: {
+    label: "CAVITATION_RISK",
+    icon: "△",
+  },
+  2: {
+    label: "THERMAL_RUNAWAY",
+    icon: "!",
+  },
+};
+
+const MACHINE_TYPES = [
+  "INDUSTRIAL_MILL",
+  "PRECISION_LATHE",
+  "HYDRAULIC_PUMP",
+  "LOGISTICS_ARRAY",
+  "THERMAL_CHAMBER",
+];
+
 function App() {
   const [machines, setMachines] = useState([]);
   const [error, setError] = useState("");
@@ -37,35 +60,41 @@ function App() {
   return (
     <main className="dashboard">
       <header className="dashboard-header">
-        <h1>ATLAS+ Digital Twin Simulation Dashboard</h1>
-        <p>Live machine telemetry updates every 2 seconds.</p>
+        <h1>ATLAS+ DIGITAL TWIN</h1>
+        <p>live signal refresh every 2s</p>
       </header>
 
       {error && <p className="error-banner">{error}</p>}
 
       <section className="card-grid">
-        {machines.map((machine) => (
-          <article
-            key={machine.machine_id}
-            className={`machine-card status-${machine.status}`}
-          >
-            <h2>{machine.machine_id}</h2>
-            <p>
-              <span>Temperature:</span> {machine.temperature} °C
-            </p>
-            <p>
-              <span>Vibration:</span> {machine.vibration}
-            </p>
-            <p>
-              <span>Status:</span> {STATUS_LABELS[machine.status] || "Normal"} (
-              {machine.status_color})
-            </p>
-            <p>
-              <span>Risk Score:</span> {machine.risk_score}
-            </p>
-            <p>
-              <span>Explanation:</span> {machine.explanation}
-            </p>
+        {machines.map((machine, index) => (
+          <article key={machine.machine_id} className={`machine-card status-${machine.status}`}>
+            <div className="card-top">
+              <p className="status-line">
+                STATUS: {STATUS_THEME[machine.status]?.label || STATUS_LABELS[machine.status] || "NOMINAL"}
+              </p>
+              <span className="machine-chip">{machine.machine_id}</span>
+            </div>
+
+            <div className="card-mid">
+              <p className="micro-label">TYPE</p>
+              <h2>{MACHINE_TYPES[index] || "INDUSTRIAL_NODE"}</h2>
+            </div>
+
+            <div className="telemetry-line">
+              <span>TEMP {machine.temperature} C</span>
+              <span>VIB {machine.vibration}</span>
+            </div>
+
+            <div className="card-bottom">
+              <div>
+                <p className="micro-label">RISK_SCORE</p>
+                <p className="risk-value">{Number(machine.risk_score).toFixed(1)}</p>
+              </div>
+              <p className="status-icon">{STATUS_THEME[machine.status]?.icon || "◎"}</p>
+            </div>
+
+            <p className="explanation">{machine.explanation}</p>
           </article>
         ))}
       </section>
