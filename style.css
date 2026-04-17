@@ -46,33 +46,38 @@ body {
     font-family: var(--font-body);
     font-size: 14px;
     height: 100vh;
+    width: 100vw;
     overflow: hidden;
 }
 
 .app-container {
     display: flex;
     height: 100vh;
+    width: 100vw;
+    overflow: hidden;
 }
 
 /* Sidebar Navigation */
 .side-nav {
     width: 240px;
+    min-width: 240px;
     background: var(--bg-darker);
-    padding: 2.5rem 1.5rem;
+    padding: 2rem 1.25rem;
     display: flex;
     flex-direction: column;
     border-right: 1px solid rgba(255, 255, 255, 0.03);
+    overflow-y: auto;
 }
 
 .side-top {
-    margin-bottom: 3.5rem;
+    margin-bottom: 2.5rem;
 }
 
 .brand {
     font-family: var(--font-header);
-    font-size: 1.5rem;
+    font-size: 1.35rem;
     font-weight: 700;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     color: var(--text-primary);
 }
 
@@ -82,25 +87,25 @@ body {
 
 .sentinel-tag {
     display: flex;
-    gap: 0.75rem;
+    gap: 0.6rem;
     align-items: center;
     background: rgba(0, 242, 255, 0.03);
-    padding: 1rem;
+    padding: 0.75rem;
     border-radius: 8px;
 }
 
 .sentinel-icon {
-    font-size: 1.25rem;
+    font-size: 1.1rem;
 }
 
 .s-ver {
-    font-size: 0.7rem;
+    font-size: 0.65rem;
     font-weight: 800;
     color: var(--accent-cyan);
 }
 
 .s-node {
-    font-size: 0.65rem;
+    font-size: 0.6rem;
     color: var(--text-muted);
 }
 
@@ -108,15 +113,15 @@ body {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.4rem;
 }
 
 .nav-item {
     text-decoration: none;
     color: var(--text-muted);
-    font-size: 0.75rem;
+    font-size: 0.7rem;
     font-weight: 700;
-    padding: 1rem;
+    padding: 0.85rem 1rem;
     border-radius: 8px;
     transition: all 0.3s;
     display: flex;
@@ -131,15 +136,16 @@ body {
 }
 
 .emergency-btn {
-    background: rgba(255, 77, 77, 0.1);
+    background: rgba(255, 77, 77, 0.08);
     color: var(--accent-red);
     border: 1px solid rgba(255, 77, 77, 0.2);
-    padding: 1.25rem;
+    padding: 1rem;
     border-radius: 8px;
     font-weight: 800;
+    font-size: 0.75rem;
     cursor: pointer;
     transition: all 0.3s;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
 }
 
 .emergency-btn:hover {
@@ -153,31 +159,35 @@ body {
     display: flex;
     flex-direction: column;
     background: var(--bg-dark);
+    min-width: 0; /* Prevents flex children from overflowing */
 }
 
 .top-bar {
-    height: 70px;
-    padding: 0 2.5rem;
+    height: 64px;
+    min-height: 64px;
+    padding: 0 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(19, 19, 21, 0.6);
-    backdrop-filter: blur(12px);
+    background: rgba(19, 19, 21, 0.65);
+    backdrop-filter: blur(16px);
     border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+    z-index: 10;
 }
 
 .view-links {
     display: flex;
-    gap: 2.5rem;
+    gap: 2rem;
 }
 
 .view-links a {
     text-decoration: none;
     color: var(--text-muted);
     font-weight: 700;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     position: relative;
-    padding: 0.5rem 0;
+    padding: 0.4rem 0;
+    white-space: nowrap;
 }
 
 .view-links a.active {
@@ -197,53 +207,57 @@ body {
 
 .top-actions {
     display: flex;
-    gap: 1.5rem;
+    gap: 1.25rem;
     align-items: center;
 }
 
 .search-box input {
     background: var(--bg-surface);
     border: none;
-    padding: 0.6rem 1.25rem;
+    padding: 0.5rem 1.25rem;
     border-radius: 999px;
     color: white;
-    font-size: 0.8rem;
-    width: 240px;
+    font-size: 0.75rem;
+    width: 200px;
 }
 
 .icon-btn {
     cursor: pointer;
     color: var(--text-muted);
+    font-size: 1.1rem;
 }
 
 .user-avatar {
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
-    background: #333;
+    background: #2a2a2c;
 }
 
 /* Dashboard Grid */
 .dashboard-grid {
     flex: 1;
     display: grid;
-    grid-template-columns: 1fr 380px;
+    grid-template-columns: 1fr 340px;
     overflow: hidden;
+    min-height: 0;
 }
 
 .viewport-content {
-    padding: 3rem;
+    padding: 2.5rem;
     overflow-y: auto;
+    min-width: 0;
 }
 
 /* Insight Sidebar */
 .insight-sidebar {
     background: var(--bg-darker);
-    padding: 2.5rem;
+    padding: 2rem;
     border-left: 1px solid rgba(255, 255, 255, 0.03);
     display: flex;
     flex-direction: column;
-    gap: 2rem;
+    gap: 1.75rem;
+    overflow-y: auto;
 }
 
 .insight-header {
