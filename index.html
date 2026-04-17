@@ -3,80 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ATLAS+ | Global Industrial Portal</title>
+    <title>ATLAS+ | Industrial Portal</title>
     <link rel="stylesheet" href="style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800;900&display=swap" rel="stylesheet">
 </head>
-<body id="app-body">
+<body>
     <header>
         <div class="brand">
-            <h1>ATLAS<span>+</span></h1>
+            <h1>ATLAS <span>+</span></h1>
         </div>
         
-        <div class="nav-controls">
-            <div class="status-capsule">
-                <div class="pulse-indicator"></div>
-                <span>FACTORY_NODE_ACTIVE</span>
-            </div>
+        <div class="view-toggle-center">
+            <button id="engineerBtn" class="toggle-pill active" onclick="switchView('engineer')">ENGINEER</button>
+            <button id="technicianBtn" class="toggle-pill" onclick="switchView('technician')">TECHNICIAN</button>
+        </div>
 
-            <div class="view-selector">
-                <button id="engineerBtn" class="selector-btn active" onclick="switchView('engineer')">ANALYTICS</button>
-                <button id="technicianBtn" class="selector-btn" onclick="switchView('technician')">OPERATIONS</button>
-            </div>
+        <div class="role-display" id="role-tag">
+            ROLE: ENGINEER
         </div>
     </header>
 
     <main>
-        <!-- Top Level Stats Summary -->
-        <section class="stats-hero">
-            <div class="hero-card">
-                <div class="hero-label">Fleet Strength</div>
-                <div class="hero-value" id="count-total">0</div>
+        <!-- Hero Section -->
+        <section class="hero-stats">
+            <div class="stat-card">
+                <div class="stat-label">Total Machines</div>
+                <div class="stat-value" id="stat-total">0</div>
             </div>
-            <div class="hero-card">
-                <div class="hero-label">High Priority</div>
-                <div class="hero-value" id="count-critical" style="color: var(--neon-crimson); text-shadow: 0 0 15px rgba(248, 113, 113, 0.3);">0</div>
+            <div class="stat-card" style="border-left: 2px solid var(--accent-red)">
+                <div class="stat-label">Critical Alerts</div>
+                <div class="stat-value" id="stat-critical" style="color: var(--accent-red)">0</div>
             </div>
-            <div class="hero-card">
-                <div class="hero-label">System Health</div>
-                <div class="hero-value" id="sys-health" style="color: var(--neon-green);">99%</div>
+            <div class="stat-card" style="border-left: 2px solid var(--accent-yellow)">
+                <div class="stat-label">System Health</div>
+                <div class="stat-value" id="stat-health">98%</div>
             </div>
         </section>
 
-        <div class="layout-split">
-            <!-- Main Grid (Left) -->
-            <section class="viewport-main">
-                <div class="section-head">
-                    <h2 id="view-indicator">Predictive Diagnostics</h2>
-                </div>
-                <div class="machine-grid" id="main-grid">
-                    <!-- Dynamic machine cards -->
-                </div>
-            </section>
+        <!-- Machine Grid -->
+        <h3 class="main-grid-title">Machine Analysis</h3>
+        <section class="machine-grid" id="main-grid">
+            <!-- Cards injected here -->
+        </section>
 
-            <!-- Intelligence Sidebar (Right) -->
-            <aside class="sidebar-panel">
-                <section>
-                    <div class="section-head">
-                        <h2>Live Intelligence</h2>
-                    </div>
-                    <div id="alert-feed">
-                        <!-- Dynamic alerts -->
-                    </div>
-                </section>
-
-                <section>
-                    <div class="section-head">
-                        <h2>Maintenance Priority</h2>
-                    </div>
-                    <div id="priority-stack">
-                        <!-- Sorted priority items -->
-                    </div>
-                </section>
-            </aside>
+        <!-- Bottom Layout -->
+        <div class="bottom-layout">
+            <div class="panel-card">
+                <h2>Diagnostic Alerts</h2>
+                <div id="alerts-list">
+                    <!-- Alerts injected here -->
+                </div>
+            </div>
+            <div class="panel-card">
+                <h2>Risk Priority</h2>
+                <div id="priority-list">
+                    <!-- Priority row injected here -->
+                </div>
+            </div>
         </div>
     </main>
 
