@@ -137,8 +137,8 @@ function renderCharts() {
                         {
                             label: 'Temp',
                             data: [...history.temp],
-                            borderColor: '#0088ff',
-                            backgroundColor: 'rgba(0, 136, 255, 0.1)',
+                            borderColor: '#00f2ff',
+                            backgroundColor: 'rgba(0, 242, 255, 0.1)',
                             borderWidth: 3,
                             pointRadius: 0,
                             tension: 0.4,
@@ -147,8 +147,8 @@ function renderCharts() {
                         {
                             label: 'Vib',
                             data: [...history.vib],
-                            borderColor: '#a855f7',
-                            backgroundColor: 'rgba(168, 85, 247, 0.1)',
+                            borderColor: '#ffb4ab',
+                            backgroundColor: 'rgba(255, 180, 171, 0.1)',
                             borderWidth: 3,
                             pointRadius: 0,
                             tension: 0.4,
