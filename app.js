@@ -1,6 +1,6 @@
 let machineData = [];
 let currentView = 'engineer';
-let historyMap = {}; // { machine_id: { temp: [], vib: [] } }
+let historyMap = {}; 
 let chartInstances = {};
 
 async function init() {
@@ -8,7 +8,6 @@ async function init() {
         const response = await fetch('data.json');
         machineData = await response.json();
         
-        // Initialize history
         machineData.forEach(m => {
             historyMap[m.machine_id] = {
                 temp: Array(15).fill(m.temperature),
@@ -35,7 +34,8 @@ function switchView(view) {
     document.getElementById('technicianBtn').classList.toggle('active', view === 'technician');
     document.getElementById('role-tag').textContent = `ROLE: ${view.toUpperCase()}`;
     
-    // Destroy all charts when switching to wipe state
+    // Clear the grid to force a full re-render for the toggle
+    document.getElementById('main-grid').innerHTML = '';
     Object.values(chartInstances).forEach(c => c.destroy());
     chartInstances = {};
     
@@ -45,7 +45,7 @@ function switchView(view) {
 function renderDashboard() {
     updateHeroStats();
     renderMachineGrid();
-    renderCharts(); // Initialize charts after grid exists
+    renderCharts();
     renderAlerts();
     renderPriority();
 }
@@ -62,58 +62,73 @@ function updateHeroStats() {
 
 function renderMachineGrid() {
     const grid = document.getElementById('main-grid');
-    grid.innerHTML = machineData.map(m => {
+    
+    machineData.forEach(m => {
+        let card = document.querySelector(`.m-card[data-id="${m.machine_id}"]`);
         const risk = getRisk(m.temperature, m.vibration);
         const color = `var(--accent-${risk.toLowerCase()})`;
 
-        return `
-            <div class="m-card">
-                <div class="m-card-top">
-                    <span class="m-id">${m.machine_id}</span>
-                    <span class="risk-tag" style="color: ${color}">${risk}</span>
+        if (!card) {
+            const cardHtml = `
+                <div class="m-card" data-id="${m.machine_id}">
+                    <div class="m-card-top">
+                        <span class="m-id">${m.machine_id}</span>
+                        <span class="risk-tag" style="color: ${color}">${risk}</span>
+                    </div>
+                    <div class="m-data-grid">
+                        <div class="data-node">
+                            <span class="node-label">Temperature</span>
+                            <span class="node-val val-temp">${m.temperature.toFixed(1)}°C</span>
+                        </div>
+                        <div class="data-node">
+                            <span class="node-label">Vibration</span>
+                            <span class="node-val val-vib">${m.vibration.toFixed(2)} mm/s</span>
+                        </div>
+                        <div class="data-node">
+                            <span class="node-label">RPM</span>
+                            <span class="node-val">${m.rpm}</span>
+                        </div>
+                        <div class="data-node">
+                            <span class="node-label">Current</span>
+                            <span class="node-val">${m.current}A</span>
+                        </div>
+                    </div>
+                    ${currentView === 'engineer' ? `
+                        <div class="chart-wrap">
+                            <canvas id="chart-${m.machine_id}"></canvas>
+                        </div>
+                    ` : ''}
                 </div>
-
-                <div class="m-data-grid">
-                    <div class="data-node">
-                        <span class="node-label">Temperature</span>
-                        <span class="node-val">${m.temperature.toFixed(1)}°C</span>
-                    </div>
-                    <div class="data-node">
-                        <span class="node-label">Vibration</span>
-                        <span class="node-val">${m.vibration.toFixed(2)} mm/s</span>
-                    </div>
-                    <div class="data-node">
-                        <span class="node-label">RPM</span>
-                        <span class="node-val">${m.rpm}</span>
-                    </div>
-                    <div class="data-node">
-                        <span class="node-label">Current</span>
-                        <span class="node-val">${m.current}A</span>
-                    </div>
-                </div>
-
-                ${currentView === 'engineer' ? `
-                    <div class="chart-wrap">
-                        <canvas id="chart-${m.machine_id}"></canvas>
-                    </div>
-                ` : ''}
-            </div>
-        `;
-    }).join('');
+            `;
+            grid.insertAdjacentHTML('beforeend', cardHtml);
+            card = document.querySelector(`.m-card[data-id="${m.machine_id}"]`);
+        } else {
+            // Update existing card values
+            card.querySelector('.val-temp').textContent = `${m.temperature.toFixed(1)}°C`;
+            card.querySelector('.val-vib').textContent = `${m.vibration.toFixed(2)} mm/s`;
+            const tag = card.querySelector('.risk-tag');
+            tag.textContent = risk;
+            tag.style.color = color;
+        }
+    });
 }
 
 function renderCharts() {
     if (currentView !== 'engineer') return;
 
     machineData.forEach(m => {
-        const ctx = document.getElementById(`chart-${m.machine_id}`).getContext('2d');
+        const canvas = document.getElementById(`chart-${m.machine_id}`);
+        if (!canvas) return;
+        
         const history = historyMap[m.machine_id];
 
         if (chartInstances[m.machine_id]) {
-            chartInstances[m.machine_id].data.datasets[0].data = history.temp;
-            chartInstances[m.machine_id].data.datasets[1].data = history.vib;
-            chartInstances[m.machine_id].update('none'); // silent update
+            const chart = chartInstances[m.machine_id];
+            chart.data.datasets[0].data = history.temp;
+            chart.data.datasets[1].data = history.vib;
+            chart.update('none'); 
         } else {
+            const ctx = canvas.getContext('2d');
             chartInstances[m.machine_id] = new Chart(ctx, {
                 type: 'line',
                 data: {
@@ -121,19 +136,21 @@ function renderCharts() {
                     datasets: [
                         {
                             label: 'Temp',
-                            data: history.temp,
+                            data: [...history.temp],
                             borderColor: '#0088ff',
                             borderWidth: 2,
                             pointRadius: 0,
-                            tension: 0.4
+                            tension: 0.4,
+                            fill: false
                         },
                         {
                             label: 'Vib',
-                            data: history.vib,
+                            data: [...history.vib],
                             borderColor: '#a855f7',
                             borderWidth: 2,
                             pointRadius: 0,
                             tension: 0.4,
+                            fill: false,
                             yAxisID: 'y1'
                         }
                     ]
@@ -141,6 +158,7 @@ function renderCharts() {
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    animation: false,
                     plugins: { legend: { display: false } },
                     scales: {
                         x: { display: false },
@@ -157,11 +175,6 @@ function renderAlerts() {
     const list = document.getElementById('alerts-list');
     const anomalies = machineData.filter(m => getRisk(m.temperature, m.vibration) !== 'LOW');
     
-    if (anomalies.length === 0) {
-        list.innerHTML = '<div style="color: #555; font-size: 0.8rem; padding: 1rem;">No diagnostic alerts.</div>';
-        return;
-    }
-
     list.innerHTML = anomalies.map(m => {
         const risk = getRisk(m.temperature, m.vibration);
         return `
@@ -173,7 +186,7 @@ function renderAlerts() {
                 </div>
             </div>
         `;
-    }).join('');
+    }).join('') || '<div style="color: #555; font-size: 0.8rem; padding: 1rem;">No diagnostic alerts.</div>';
 }
 
 function renderPriority() {
@@ -197,13 +210,12 @@ function renderPriority() {
 function startSimulation() {
     setInterval(() => {
         machineData = machineData.map(m => {
-            const tShift = (Math.random() - 0.5) * 6;
-            const vShift = (Math.random() - 0.5) * 0.4;
+            const tShift = (Math.random() - 0.5) * 8;
+            const vShift = (Math.random() - 0.5) * 0.5;
             
             const newT = Math.max(30, Math.min(100, m.temperature + tShift));
             const newV = Math.max(0.1, Math.min(5, m.vibration + vShift));
 
-            // Update history
             historyMap[m.machine_id].temp.push(newT);
             historyMap[m.machine_id].vib.push(newV);
             
